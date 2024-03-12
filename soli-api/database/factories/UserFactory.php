@@ -4,16 +4,12 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
+use Vhiepp\VNDataFaker\VNFaker;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
     /**
@@ -23,12 +19,20 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $firstName = VNFaker::firstname(rand(1, 2));
+        $lastName = VNFaker::lastname();
+        $fullName = $lastName . ' ' . $firstName;
+        $dateOfBirth = fake()->date();
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'full_name' => $fullName,
+            'firstname' => $firstName,
+            'lastname' => $lastName,
+            'email' => VNFaker::email([], str($firstName)->slug('') . str($dateOfBirth)->slug('')),
+            'date_of_birth' => $dateOfBirth,
+            'gender' => VNFaker::gender(),
+            'address' => VNFaker::address(rand(1, 2)),
+            'role' => 'user',
+            'maxim' => ''
         ];
     }
 
