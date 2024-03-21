@@ -26,7 +26,6 @@ Route::middleware('api')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('sign-in', [AuthController::class, 'signInWithEmailPassword']);
         Route::post('sign-in-with-firebase', [AuthController::class, 'signInWithFirebase']);
-        Route::post('sign-in-with-oauth', [AuthController::class, 'signInWithOAuth']);
     });
 
     Route::middleware('authen')->group(function () {

@@ -39,7 +39,7 @@ class AuthController extends Controller
                 $token = auth()->tokenById($user->id);
                 if ($token) {
                     $cookie = cookie('token', $token, auth()->factory()->getTTL());
-                    return response()->json(reshelper()->withFormat($this->resProfile($user, $token)))->cookie($cookie);
+                    return response()->json(reshelper()->withFormat($this->resProfile($user)))->cookie($cookie);
                 }
             }
         try {
@@ -129,52 +129,6 @@ class AuthController extends Controller
 
         return response()->json(reshelper()->withFormat(null, 'It could be due to expired firebase_access_token or input parameter error', 'error', false, true));
     }
-
-    public function signInWithOAuth(Request $request)
-    {
-        try {
-            $provider = $request->input('sign_in_provider');
-            $providerId = $request->input('provider_id');
-            $account = Account::whereProvider([
-                'provider' => $provider,
-                'provider_id' => $providerId,
-                'username' => $provider . '-' . $request->input('email')
-            ])->first();
-            if ($account) {
-                $user = $account->user;
-            } else {
-                $user = User::where('email', $request->input('email'))->first();
-                if ($user == null) {
-                    $user = User::create([
-                        'full_name' => $request->input('full_name'),
-                        'firstname' => $request->input('firstname'),
-                        'lastname' => $request->input('lastname'),
-                        'email' => $request->input('email')
-                    ]);
-                    try {
-                        if (str($request->input('avatar_url'))->isUrl()) {
-                            $this->userService->changeAvatar($user, $request->input('avatar_url'));
-                        }
-                    } catch (\Exception $exception) {}
-                }
-                $user->accounts()->create([
-                    'username' => $provider . '-' . $request->input('email'),
-                    'password' => rand() . env('JWT_SECRET', '.') . rand(),
-                    'provider' => $provider,
-                    'provider_id' => $providerId
-                ]);
-            }
-            $user = User::find($user->id);
-            $token = auth()->login($user);
-            if (!$token) {
-                return response()->json(reshelper()->withFormat(null, 'Unauthorized', 'error', false, true));
-            }
-            $cookie = cookie('token', $token, auth()->factory()->getTTL());
-            return response()->json(reshelper()->withFormat($this->resProfile($user, $token), 'Successfully sign in'))->cookie($cookie);
-        } catch (\Exception $exception) {}
-
-        return response()->json(reshelper()->withFormat(null, 'It could be due to expired firebase_access_token or input parameter error', 'error', false, true));
-    }
     /**
      * Get the authenticated User.
      *
@@ -187,14 +141,13 @@ class AuthController extends Controller
         return response()->json(reshelper()->withFormat($this->resProfile($user)))->cookie($cookie);
     }
 
-    public function resProfile($user, $token = null)
+    public function resProfile($user)
     {
         $posts_total = $user->posts()->count();
         $followers_total = $user->followers()->count();
         $following_total = $user->following()->count();
         return [
             'profile' => $user,
-            'access_token' => $token,
             'posts' => [
                 'total' => $posts_total,
                 'total_short' => numberhelper()->abbreviateNumber($posts_total),

@@ -22,8 +22,7 @@ class Account extends Model
 
     protected $hidden = [
         'user_id',
-        'password',
-        'provider_id'
+        'password'
     ];
 
     protected $casts = [
