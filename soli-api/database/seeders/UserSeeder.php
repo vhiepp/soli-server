@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
                        'provider' => 'email/password',
                        'provider_id' => $user->email,
                    ]);
-                   $userService->changeAvatar($user, VNFaker::avatar());
+//                   $userService->changeAvatar($user, VNFaker::avatar());
                }
                 if ($i > 1) echo "\033[F\033[K";
                 echo "User đã tạo: " . ($sum += $jump) . "\n";
