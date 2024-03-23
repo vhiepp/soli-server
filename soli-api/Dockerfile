@@ -2,7 +2,7 @@ FROM wyveo/nginx-php-fpm:php81
 
 WORKDIR /var/www/html
 
-COPY ../../../genzii/genzii-docker/genzii-backend-laravel .
+COPY . .
 
 COPY ./docker/nginx_log /var/log/nginx
 COPY ./docker/php-fpm/php-fpm.log /var/log/php-fpm.log
