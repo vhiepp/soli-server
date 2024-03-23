@@ -1,0 +1,33 @@
+version: "3"
+services:
+  mysql-server:
+    image: mysql:8.0.35
+    container_name: soli-mysql-server
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Soli12345@@
+    networks:
+      - soli
+      
+  soli-backend:
+    build:
+      context: ./soli-api
+      dockerfile: ./Dockerfile
+    container_name: soli-backend
+    working_dir: /var/www/html
+    volumes:
+      - ./images:/var/www/html/storage/app
+    ports:
+      - "2307:80"
+    networks:
+      - soli
+
+networks:
+  soli:
+  
+    
+
+  
+
+  
