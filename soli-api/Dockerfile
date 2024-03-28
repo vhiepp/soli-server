@@ -13,8 +13,6 @@ RUN ["chown", "www-data:www-data", "-R", "storage"]
 RUN ["chown", "www-data:www-data", "-R", "bootstrap"]
 RUN ["chown", "www-data:www-data", "-R", "public"]
 
-
-RUN ["chmod", "777", "-R", "storage"]
 RUN ["chmod", "777", "-R", "bootstrap"]
 RUN ["chmod", "777", "-R", "public"]
 
